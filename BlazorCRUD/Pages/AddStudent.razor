@@ -1,0 +1,73 @@
+﻿@page "/AddStudent"
+@using BlazorCRUD.Data
+@inject SchoolServices   _schoolServices
+@inject NavigationManager NavigationManager
+
+<h2>Add Employee</h2>
+<hr />
+
+<form>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                <label for="Name" class="control-label">Name</label>
+                <input form="Name" class="form-control" @bind="@obj.student_name" />
+            </div>
+            <div class="form-group">
+                <label for="Country" class="control-label">Country</label>
+                <select @bind="@obj.country_id" class="form-control">
+                    <option value="">-Select Country</option>
+                    @foreach (var item in obj.CountryList)
+                    {
+        <option value="@item.Value">@item.Text</option>}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="Country" class="control-label">Country</label>
+                <select @bind="@obj.class_id" class="form-control">
+                    <option value="">-Select Class</option>
+                    @foreach (var item in obj.ClassesList)
+                    {
+        <option value="@item.Value">@item.Text</option>}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="DateOfBirth" class="control-label">Date of Birth</label>
+                <input form="DateOfBirth" type="date" class="form-control" @bind="@obj.date_of_birth" />
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-primary" @onclick="@CreateStudent" value="Save" />
+                <input type="button" class="btn btn-primary" @onclick="@Cancel" value="Cancel" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@code { StudentModel obj = new StudentModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var countryList = await Task.Run(() => _schoolServices.GetAllCountriesAsync());
+        obj.CountryList = countryList.Select(x => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem { Value = x.id.ToString(), Text = x.name });
+
+        var classesList = await Task.Run(() => _schoolServices.GetAllClassesAsync());
+        obj.ClassesList = classesList.Select(x => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem { Value = x.id.ToString(), Text = x.class_name });
+
+
+    }
+    protected async void CreateStudent()
+    {
+        await _schoolServices.InsertStudentAsync(obj);
+        NavigationManager.NavigateTo("SchoolStudents");
+    }
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("SchoolStudents");
+    } }

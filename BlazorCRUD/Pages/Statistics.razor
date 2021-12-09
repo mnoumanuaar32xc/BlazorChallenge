@@ -1,0 +1,42 @@
+﻿@page "/Statistics"
+@using BlazorCRUD.Data
+@inject SchoolServices  _schoolServices
+
+<h1>Statistics Information.</h1>
+@if (_stdObj is null)
+{
+<p><em>Loading... !</em></p> }
+else
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th>Class</th>
+            <th>No of Students Per Class</th>
+            <th>Country</th>
+            <th>No of Students Per Country</th>
+            <th>Avg Age of Students</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in _stdObj)
+        { 
+<tr>
+    <td>@item.Class</td>
+    <td>@item.NoOfStudentsPerClass</td>
+    <td>@item.Country</td>
+    <td>@item.NoOfStudentsPerCountry</td>
+    <td> @item.AverageAgeOfStudents</td>
+    
+</tr>}
+    </tbody>
+</table>}
+
+
+@code { 
+    List<BlazorCRUD.Data.Statistics> _stdObj= new();
+    protected override async Task OnInitializedAsync()
+    {
+        _stdObj =  await Task.Run(() => _schoolServices.GetStatisticsAsync());
+    }
+     }

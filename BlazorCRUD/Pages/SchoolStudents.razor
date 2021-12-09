@@ -1,0 +1,63 @@
+﻿@page "/SchoolStudents"
+@using BlazorCRUD.Data
+@inject SchoolServices  _schoolServices
+
+<NavLink class="nav-link" href="AddStudent">
+    <span class="oi oi-plus" aria-hidden="true">Add New</span>
+
+</NavLink>
+
+<h1>Rihal School Information System.</h1>
+@if (_stdObj is null)
+{
+<p><em>Loading... !</em></p> }
+else
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th>Student Id</th>
+            <th>Name</th>
+            <th>Class</th>
+            <th>Country</th>
+            <th>Date Of Birth</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in _stdObj)
+        { 
+<tr>
+    <td>@item.student_id</td>
+    <td>@item.student_name</td>
+    <td>@item.class_name</td>
+    <td>@item.country_name</td>
+    <td>@item.date_of_birth</td>
+    <td>
+        <a class="nav-link" href="EditStudent/@item.student_id">
+            <span class="oi oi-pencil" aria-hidden="true"></span>
+        </a>
+      
+        <a href="" @onclick="@(() => _schoolServices.DeleteStudentsAsync(item))">
+            <span class="oi oi-trash" aria-hidden="true"></span>
+        </a>
+ 
+    </td>
+</tr>}
+    </tbody>
+</table>}
+
+
+@code {
+    [Parameter]
+
+    public string Id { get; set; }
+    List<StudentModel> _stdObj;
+    Students students = new Students();
+    protected override async Task OnInitializedAsync()
+    {
+        
+        _stdObj = await Task.Run(() => _schoolServices.GetAllStudentssAsync());
+        students = await Task.Run(() => _schoolServices.GetStudentsAsync(Convert.ToInt32(Id)));
+    }
+     }
